@@ -1,0 +1,23 @@
+// _buttonStyles.scss
+@mixin button-styles($bg-color, $hover-color, $text-color: #fff) {
+    background-color: $bg-color;
+    color: $text-color;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    transition: background-color 0.3s ease;
+  
+    &:hover {
+      background-color: $hover-color;
+    }
+  
+    &:disabled {
+      background-color: darken($bg-color, 20%);
+      cursor: not-allowed;
+    }
+  }

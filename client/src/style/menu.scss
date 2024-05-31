@@ -1,0 +1,299 @@
+@import './variables';
+@import 'buttonStyles';
+
+.menu-container {
+  padding: 2rem;
+}
+
+.menu-button {
+  @include button-styles($main-blue, $accent-blue);
+
+
+}
+
+.menu-options{
+  display: flex; 
+  gap: 0.5rem; 
+  align-items: center;
+}
+
+.search-bar{
+  width: 50%;
+  padding: 0.75rem;
+  border-radius: 99px;
+  border: 1px solid $main-grey;
+  font-size: 1rem;
+}
+
+.search-bar:focus{
+  outline: none;
+  border: 1px solid $main-grey;
+  filter: drop-shadow(2px 2px 2px $main-grey);
+}
+
+.menu-filter-button{
+  padding: 0.75rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  border-radius: 99px;
+  border: 1px solid $main-grey;
+  font-size: 1rem;
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  img{
+    width: 70%;
+  }
+}
+
+.menu-list {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.menu-item {
+  width: 250px;
+  margin: 1rem;
+  padding: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 0.25rem;
+  text-align: center;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  img {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 0.5rem;
+  }
+
+  .menu-item-name, .menu-item-price{
+    padding: 0;
+    margin: 0;
+    color: $navy-blue;
+    font-weight: bold;
+  }
+
+  .menu-item-price{
+    font-size: 1.5rem;
+  }
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  max-width: 600px;
+  margin: 0 auto;
+
+  h2{
+    font-size: 2rem;
+    color: $navy-blue;
+  }
+
+  .input-field{
+    color: $navy-blue;
+  }
+}
+
+.input-field, .text-area {
+  padding: 1rem 0.5rem;
+  margin: 1rem 0;
+  border: none;
+  border-bottom: 1px solid #ccc;
+  color: $navy-blue;
+  font-size: 1.5rem;
+  outline: none;
+
+  &:focus {
+    border-bottom: 1px solid $dark-blue;
+  }
+}
+
+.label {
+  color: $main-grey;
+  margin-bottom: 0.5rem;
+}
+
+.image-upload {
+  padding: 1rem;
+  margin: 1rem 0;
+  border: 1px dashed #ccc;
+  border-radius: 0.25rem;
+  text-align: center;
+
+  input {
+    display: none;
+  }
+
+  label {
+    cursor: pointer;
+    color: $main-blue;
+    text-decoration: underline;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+    margin-top: 1rem;
+  }
+}
+
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+  gap: 0.5rem;
+}
+
+.options-container {
+  display: flex;
+  flex-direction: column;
+  margin-left: 2rem;
+}
+
+.option-list {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+
+  .option {
+    display: flex;
+    align-items: center;
+    margin: 0.5rem;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 0.25rem;
+    background-color: #f9f9f9;
+  }
+
+  .remove-button {
+    margin-left: 0.5rem;
+    cursor: pointer;
+  }
+}
+
+.option-input-container {
+  display: flex;
+  align-items: center;
+
+  input {
+    margin-right: 0.5rem;
+    padding: 0.5rem;
+    border: none;
+    border-bottom: 1px solid #ccc;
+    outline: none;
+
+    &:focus {
+      border-bottom: 1px solid $dark-blue;
+    }
+  }
+
+  .add-option-button {
+    padding: 0.5rem 1rem;
+    border: 1px solid $main-blue;
+    background-color: white;
+    color: $main-blue;
+    border-radius: 0.25rem;
+    cursor: pointer;
+
+    &:hover {
+      background-color: $main-blue;
+      color: white;
+    }
+  }
+}
+
+.slide-out-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 400px;
+  height: 95vh;
+  background: white;
+  box-shadow: -2px 0 5px $light-blue;
+  transform: translateX(100%);
+  transition: transform 0.3s ease-in-out;
+  padding: 2rem;
+  overflow-y: auto;
+  z-index: 1000;
+
+  &.open {
+    transform: translateX(0);
+  }
+
+  .slide-out-title, .slide-out-price, .slide-out-description, .slide-out-options{
+    color: $navy-blue;
+    text-transform: capitalize;
+  }
+
+  ul{
+    list-style: none;
+    margin: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+
+    .menu-item-option {
+      background-color: white;
+      border: 1px solid $light-grey;
+      cursor: pointer;
+      padding: 1rem;
+      font-weight: 500;
+      margin: 0.5rem 0;
+      filter: drop-shadow(0px 3px 2px $main-grey);
+      &.selected {
+        border-color: $main-blue;
+        filter: drop-shadow(1px 1px 2px $main-blue);
+      }
+    }
+  }
+}
+
+.close-button {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.add-button {
+  width: 100%;
+
+  margin-top: 1rem;
+
+  @include button-styles($main-blue, $accent-blue);
+  padding: 1rem;
+
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+
+
+}
+
+.slide-out-title {
+  font-size: 2rem;
+}
+
+.slide-out-image {
+  width: 50%;
+}
+
+
+
+.slide-out-summary {
+  width: 80%;
+  position: absolute;
+  bottom: 3rem;
+  padding: 1rem;
+}
+
+.slide-out-summary p {
+  margin: 0.5rem 0;
+}

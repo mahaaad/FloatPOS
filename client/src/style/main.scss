@@ -1,0 +1,412 @@
+@import './variables';
+@import 'buttonStyles';
+
+
+.tab-button{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: $dark-blue;
+    display: flex;
+    gap: 0.5rem;
+    border: none;
+    outline: none;
+    background: none;
+    font-size: 1.75rem;
+    font-weight: 600;
+    //border-bottom: 3px solid #38C6F4;
+    justify-content: center;
+    cursor: pointer;
+}
+
+
+/* table management */
+.table-management{
+    width: 100%;
+    height: calc(100vh - 9.5rem);
+    position: relative;
+    display: flex;
+    border-top: 1px solid $main-blue;
+}
+
+.table-zoom-settings{
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    z-index: 99;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.zoom-button{
+    border: none;
+    outline: none;
+    background-color: $main-blue;
+    color: white;
+    border-radius: 99px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    padding: 1rem;
+    padding-top: 0;
+    padding-bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+}
+
+.table-grid-wrapper{
+    width: 80%;
+    height: 100%;
+}
+
+.table-grid-container{
+    width: 100%;
+    height: 80%;
+    border-spacing: 1px;
+    overflow: hidden;
+    position: relative;
+}
+
+@keyframes border-dance {
+    0% {
+      background-position: 0px 0px, 100% 100%, 0px 100%, 100% 0px;
+    }
+    100% {
+      background-position: 100% 0px, 0px 100%, 0px 0px, 100% 100%;
+    }
+  }
+  
+  .grid-animated {
+    background: linear-gradient(90deg, $main-blue 50%, transparent 50%), linear-gradient(90deg, $main-blue 50%, transparent 50%), linear-gradient(0deg, $main-blue 50%, transparent 50%), linear-gradient(0deg, $main-blue 50%, transparent 50%);
+    background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
+    background-size: 15px 3px, 15px 3px, 3px 15px, 3px 15px;
+    background-position: 0px 0px, 100% 100%, 0px 100%, 100% 0px;
+    padding: 0px;
+    animation: border-dance 8s infinite linear;
+  }
+  
+  .grid-normal {
+    border: 2px dashed $main-blue;
+  }
+  
+.table-grid{
+    width: 100%;
+    height: 100%;
+    background-size: 40px 40px;
+    background-image:
+    linear-gradient(to right, $light-blue 1px, transparent 1px),
+    linear-gradient(to bottom, $light-blue 1px, transparent 1px);
+    position: absolute;
+    
+}
+
+/*default right menu (reservations/dine in/take out)*/
+.default-right-menu{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 20%;
+
+    .reservation-controls{
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        justify-content: space-evenly;
+        height: 20rem;
+        width: 80%;
+
+        .control-button{
+            height: 5rem;
+        }
+    }
+}
+
+
+/* table editing */
+.table-presets{
+     flex-direction: column;
+     width: 20%;
+     min-width: 20rem;
+}
+.edit-tables-title{
+    text-align: center;
+    color: #38C6F4;
+    font-weight: 400;
+}
+
+.table-options{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    @media (max-width: 600px) {
+        flex-direction: column;
+    }
+
+    flex-direction: row;
+
+    .table-option{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 49%;
+        min-width: 9rem;
+        min-height: 9rem;
+        border: 1px solid #38C6F450;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        @media (max-width: 600px) {
+            width: 100%;
+        }        
+    } 
+}
+
+.draggable-content{
+    width: 12rem;
+    height: 12rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .draggable-icon{
+        position: absolute;
+        top: 5px;
+        right: 5px;
+    }
+}
+.draggable-content.dragging {
+    //position: absolute !important;
+    z-index: 1000;
+    min-width: 20vw;
+    transition: all ease-in-out 0.05s;
+ 
+  }
+
+.table-menu{
+    position: absolute;
+    z-index: 9999;
+    bottom: 100%;
+    background: rgba(255, 255, 255, 0.507);
+    background: linear-gradient(28deg, rgba(255,255,255,0.8) 54%, rgba(255,255,255,0.4) 93%);
+    padding: 0.5rem;
+
+    *{
+        font-weight: 500;
+        margin: 0;
+    }
+    .table-number{
+        font-size: 2rem;
+        font-weight: 500;
+        margin: 0;
+    }
+
+    .table-count{
+        color: $main-grey;
+        font-size: 1.25rem;
+
+    }
+
+    .table-server{
+        color: $dark-grey;
+        font-size: 1.35rem;
+        text-wrap: nowrap;
+    }
+
+    button{
+        margin-right:0.5rem;
+    }
+
+}
+
+/* grid options*/
+.table-grid-options{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 10%;
+
+
+    .table-grid-sections{
+        flex: 0.6;
+        background-color: $ultra-light-blue;
+        padding: 0.5rem;
+        overflow-y: hidden;
+        overflow-x: scroll;
+        display: flex;
+        justify-content: flex-start;
+        margin-left: 0.5rem;
+        position: relative;
+        overflow: hidden;
+        height: 4rem;
+        
+        .section-button{
+            background: $main-blue;
+            border: none;
+            color: white;
+            font-size: 1.25rem;
+            padding: 0.75rem;
+            border-radius: 5px;
+        }
+
+        .section-control-buttons{
+            position: absolute;
+            right: 5px;
+            top: 0px;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            .section-control-button{
+                width: 2rem;
+                margin-right: 0.5rem;
+                background: none;
+                border: none;
+                padding: 0;
+                height: 2.5rem;
+                width: 2.5rem;
+            }
+        }
+    }
+
+    .edit-button{
+        background: $main-blue;
+        border: none;
+        color: white;
+        font-size: 1.25rem;
+        padding: 0.75rem;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .table-grid-control{
+        flex: 0.4;
+        display: flex;
+        align-items: center;
+        justify-content: space-evenly;
+
+        .grid-control-button{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: none;
+            border: none;
+            color: $dark-blue;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+    }
+}
+
+/* table presets */
+
+.table-right-menu{
+    width: 20%;
+    min-width: 20rem;
+    height: calc(100% - 7rem);
+}
+
+.presets-title{
+    text-align: center;
+    color: $main-blue;
+    font-weight: 400;
+}
+.saved-presets{
+    width: 100%;
+    height: 35%;
+    padding: 0!important;
+    margin: 0;
+    color: $dark-grey;
+    font-size: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow-x: hidden;
+    overflow-y: scroll;
+
+    .preset-list{
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        list-style: none;
+        width: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 99;
+
+        .preset{
+            width: 90%;
+            height: 70%;
+            margin-bottom: 1rem;
+            background-color: white;
+            filter: drop-shadow(5px 8px 10px $light-grey);
+            border: 1px solid $light-grey;
+            background-color: $ultra-light-blue;
+            display: flex;
+            flex-direction: column;
+
+            .preset-preview{
+                height: 90%;
+                width: 100%;
+                object-fit: cover;
+                opacity: 0.8;
+            }
+
+            .preset-name{
+                height: 15%;
+                color: $dark-blue;
+                font-weight: 500;
+                padding: 0;
+                padding-left: 1rem;
+                background-color: white;
+                margin: 0;
+                display: flex;
+                align-items: center;
+                
+
+            }
+        }
+    }
+}
+
+
+.preset-buttons{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+
+    padding: 0.75rem;
+}
+.preset-button{
+    border: none;
+    outline: none;
+    background-color: $main-blue;
+    color: white;
+    border-radius: 5px;
+    font-size: 1.2rem;
+    width: 42%;
+    height: 3.5rem;
+    padding-left: 0.25rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.25rem;
+    padding-right: 0.5rem;
+    filter: drop-shadow(0px 3px 4px $main-grey);
+    cursor: pointer;
+
+}
+
+.control-button, .preset-button, .edit-button, .table-add-button,
+.table-checkout-button {
+    @include button-styles($main-blue, #0898CC);
+  }
