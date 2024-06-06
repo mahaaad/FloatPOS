@@ -18,10 +18,10 @@ export default function TableManagement() {
   const [isSpacePressed, setIsSpacePressed] = useState(false);
   const [gridPosition, setGridPosition] = useState({ x: 0, y: 0 });
   const [cursorStyle, setCursorStyle] = useState("default");
-  const [isEditMode, setIsEditMode] = useState(false); // State for edit mode
-  const [selectedTable, setSelectedTable] = useState(null); // State for selected table
+  const [isEditMode, setIsEditMode] = useState(false); 
+  const [selectedTable, setSelectedTable] = useState(null); 
 
-  // State for modal
+ 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [presetName, setPresetName] = useState("");
 
@@ -151,8 +151,8 @@ export default function TableManagement() {
       image: imgData
     };
     setPresets([...presets, newPreset]);
-    setIsModalOpen(false); // Close the modal
-    setPresetName(""); // Reset the preset name
+    setIsModalOpen(false);
+    setPresetName(""); 
   };
 
   const handleLoadPreset = (preset) => {
@@ -177,7 +177,7 @@ export default function TableManagement() {
   const toggleEditMode = () => {
     setIsEditMode(!isEditMode);
     if (!isEditMode) {
-      setSelectedTable(null); // Deselect any table when entering edit mode
+      setSelectedTable(null); 
     }
   };
 
@@ -215,10 +215,10 @@ export default function TableManagement() {
                 initialPosition={item.position}
                 isInGrid={true}
                 updatePosition={(position) => updateElementPosition(index, position)}
-                isDraggable={isEditMode} // Pass isEditMode to control dragging
-                isSelected={selectedTable === index} // Pass selected state
-                onSelect={() => setSelectedTable(index)} // Handle selection
-                selectedTable={selectedTable} // Pass the selectedTable state
+                isDraggable={isEditMode} 
+                isSelected={selectedTable === index} 
+                onSelect={() => setSelectedTable(index)} 
+                selectedTable={selectedTable} 
               />
             ))}
           </Grid>
@@ -271,7 +271,7 @@ export default function TableManagement() {
               gridRef={gridRef}
               addElementToGrid={addElementToGrid}
               resetOnDrop
-              isDraggable={isEditMode} // Pass isEditMode to control dragging
+              isDraggable={isEditMode} 
             />
           </div>
           <div className="table-option">
@@ -280,7 +280,7 @@ export default function TableManagement() {
               gridRef={gridRef}
               addElementToGrid={addElementToGrid}
               resetOnDrop
-              isDraggable={isEditMode} // Pass isEditMode to control dragging
+              isDraggable={isEditMode}
             />
           </div>
           <div className="table-option">
@@ -289,7 +289,7 @@ export default function TableManagement() {
               gridRef={gridRef}
               addElementToGrid={addElementToGrid}
               resetOnDrop
-              isDraggable={isEditMode} // Pass isEditMode to control dragging
+              isDraggable={isEditMode}
             />
           </div>
           <div className="table-option">
@@ -298,7 +298,7 @@ export default function TableManagement() {
               gridRef={gridRef}
               addElementToGrid={addElementToGrid}
               resetOnDrop
-              isDraggable={isEditMode} // Pass isEditMode to control dragging
+              isDraggable={isEditMode} 
             />
           </div>
         </div>

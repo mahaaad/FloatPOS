@@ -12,33 +12,3 @@ html{
   //overflow: hidden;
 
 }
-
-section{
-  width: calc(100% - 3rem);
-}
-
-
-.tabs{
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  height: 5rem;
-  gap: 2rem;
-  border-bottom: 1px solid $main-blue;
-}
-
-.tab-button {
-  padding: 1rem;
-  background: none;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  font-size: 1rem;
-
-  &.active {
-    border-bottom: 3px solid $main-blue;
-    background-color: $ultra-light-blue;
-    box-sizing: content-box;
-  }
-}

@@ -5,7 +5,7 @@ import Draggable from "react-draggable";
 const TableImg = styled.img`
   width: 60%;
   height: 60%;
-  pointer-events: none; /* This ensures the image doesn't interfere with dragging */
+  pointer-events: none;                  
 `;
 
 export default function DraggableTable({
@@ -16,7 +16,7 @@ export default function DraggableTable({
   initialPosition = { x: 0, y: 0 },
   isInGrid = false,
   resetOnDrop = false,
-  isDraggable = true, // New prop to control draggable state
+  isDraggable = true, 
   isSelected,
   onSelect,
   selectedTable
@@ -41,7 +41,7 @@ export default function DraggableTable({
       draggableRect.top >= gridRect.top &&
       draggableRect.bottom <= gridRect.bottom
     ) {
-      // Element is within the grid bounds
+ 
       const newX = draggableRect.left - gridRect.left;
       const newY = draggableRect.top - gridRect.top;
 
@@ -59,7 +59,7 @@ export default function DraggableTable({
             updatePosition={updatePosition}
             initialPosition={{ x: newX, y: newY }}
             isInGrid={true}
-            isDraggable={isDraggable} // Pass the prop
+            isDraggable={isDraggable}
             isSelected={isSelected}
             onSelect={onSelect}
             selectedTable={selectedTable}
@@ -71,7 +71,7 @@ export default function DraggableTable({
         }
       }
     } else {
-      // Element is outside the grid bounds, reset position
+
       setPosition(initialPosition);
     }
 
@@ -84,7 +84,7 @@ export default function DraggableTable({
       onStart={() => isDraggable && setDragging(true)}
       onStop={isDraggable ? handleDragStop : null}
       position={position}
-      disabled={!isDraggable} // Disable dragging if not in edit mode
+      disabled={!isDraggable}
     >
       <div
         ref={draggableRef}

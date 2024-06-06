@@ -1,8 +1,25 @@
 @import './variables';
 @import 'buttonStyles';
 
-
-.tab-button{
+section{
+    width: calc(100% - 3rem);
+  }
+  
+  
+  .tabs{
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    //height: 5rem;
+    gap: 2rem;
+  }
+  
+  .tab-button {
+    padding: 0.5rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    align-items: center;
+    font-size: 1rem;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -12,11 +29,18 @@
     border: none;
     outline: none;
     background: none;
-    font-size: 1.75rem;
-    font-weight: 600;
-    //border-bottom: 3px solid #38C6F4;
-    justify-content: center;
-    cursor: pointer;
+    font-weight: 500;
+  
+    &.active {
+      border-bottom: 3px solid $main-blue;
+      background-color: $ultra-light-blue;
+      box-sizing: content-box;
+    }
+  }
+  
+
+.tab-button{
+
 }
 
 

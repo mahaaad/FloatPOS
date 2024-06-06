@@ -1,17 +1,19 @@
 import axios from 'axios';
 
-const API = axios.create({ baseURL: 'http://localhost:5000/api' });
+const API_URL = 'http://localhost:5000/api/auth';
 
-API.interceptors.request.use(req => {
-  if (localStorage.getItem('token')) {
-    req.headers['auth-token'] = localStorage.getItem('token');
-  }
-  return req;
-});
+export const register = (userData) => {
+  return axios.post(`${API_URL}/register`, userData);
+};
 
-export const register = (formData) => API.post('/auth/register', formData);
-export const login = (formData) => API.post('/auth/login', formData);
-export const createTable = (tableData) => API.post('/user/tables', tableData);
-export const getTables = () => API.get('/user/tables');
-export const createMenuItem = (itemData) => API.post('/menu/items', itemData);
-export const getMenuItems = () => API.get('/menu/items');
+export const login = (userData) => {
+  return axios.post(`${API_URL}/login`, userData);
+};
+
+export const updateProfile = (profileData) => {
+  return axios.put(`${API_URL}/profile`, profileData, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+};

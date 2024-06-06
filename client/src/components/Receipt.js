@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import '../style/receipt.scss';
 import Draggable from 'react-draggable';
+import PaymentModal from './PaymentModal';
+import SplitBillModal from './SplitBillModal';
 
 const Receipt = ({ receiptItems, onAddMenuItem, onClose, title, onDeleteItem, onUpdateQuantity }) => {
   const [subtotal, setSubtotal] = useState(0);
   const [tax, setTax] = useState(0);
   const [total, setTotal] = useState(0);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [isSplitBillModalOpen, setIsSplitBillModalOpen] = useState(false);
+  const [splitReceipts, setSplitReceipts] = useState([]);
 
   useEffect(() => {
     calculateTotal();
@@ -18,6 +23,14 @@ const Receipt = ({ receiptItems, onAddMenuItem, onClose, title, onDeleteItem, on
     setSubtotal(newSubtotal);
     setTax(newTax);
     setTotal(newTotal);
+  };
+
+  const handlePayClick = () => {
+    setIsPaymentModalOpen(true);
+  };
+
+  const handleSplitClick = () => {
+    setIsSplitBillModalOpen(true);
   };
 
   return (
@@ -84,9 +97,16 @@ const Receipt = ({ receiptItems, onAddMenuItem, onClose, title, onDeleteItem, on
         </div>
         <div className="receipt-actions">
           <button className="receipt-button">discount</button>
-          <button className="receipt-button">split</button>
-          <button className="receipt-button">Pay ($)</button>
+          <button className="receipt-button" onClick={handleSplitClick}>split</button>
+          <button className="receipt-button" onClick={handlePayClick}>Pay ($)</button>
         </div>
+        <PaymentModal isOpen={isPaymentModalOpen} onRequestClose={() => setIsPaymentModalOpen(false)} total={total} />
+        <SplitBillModal
+          isOpen={isSplitBillModalOpen}
+          onRequestClose={() => setIsSplitBillModalOpen(false)}
+          receiptItems={receiptItems}
+          onSplitReceiptsUpdate={setSplitReceipts}
+        />
       </div>
     </Draggable>
   );
