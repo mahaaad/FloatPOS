@@ -8,10 +8,10 @@ import Reservation from './Reservations';
 import '../style/main.scss';
 
 const Main = ({user, profileData}) => {
-  console.log('Profile data in Main component:', profileData);
-  console.log(profileData['ownerName']);
-  console.log(profileData['profilePicture']);
-  console.log(profileData['restaurantName']);
+  // console.log('Profile data in Main component:', profileData);
+  // console.log(profileData['ownerName']);
+  // console.log(profileData['profilePicture']);
+  // console.log(profileData['restaurantName']);
 
   const [activeTab, setActiveTab] = useState('tables');
 
@@ -24,27 +24,31 @@ const Main = ({user, profileData}) => {
   }, [user]);
 
   useEffect(() => {
-    console.log('Profile data in Main component:', profileData);
-    console.log(profileData['ownerName']);
-    console.log(profileData['profilePicture']);
-    console.log(profileData['restaurantName']);
+    // console.log('Profile data in Main component:', profileData);
+    // console.log(profileData['ownerName']);
+    // console.log(profileData['profilePicture']);
+    // console.log(profileData['restaurantName']);
 
   }, [profileData]);
 
-  if (!user) {
-    return <div>User data not found</div>;
-  }
+  // if (!user) {
+  //   return <div>User data not found</div>;
+  // }
 
-  const profilePictureUrl = URL.createObjectURL(profileData.profilePicture);
+  //const profilePictureUrl = URL.createObjectURL(profileData.profilePicture);
+  const profilePictureUrl = ""
 
   return (
     <div className="App">
       <Nav />
       <section>
         <Header 
-          title={profileData.restaurantName || ''}
-          userName={profileData.ownerName || ''}
-          image={profilePictureUrl || ''}
+          // title={profileData.restaurantName || ''}
+          // userName={profileData.ownerName || ''}
+          // image={profilePictureUrl || ''}
+          title={"atif's" || ''}
+          userName={"mahad" || ''}
+          image={"" || ''}
         />
         <div className="tabs">
           <button 

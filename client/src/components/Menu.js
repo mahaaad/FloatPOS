@@ -4,20 +4,36 @@ import Receipt from './Receipt';
 
 const Menu = () => {
   const [menuItems, setMenuItems] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [menuPages, setMenuPages] = useState([]);
+  const [selectedPage, setSelectedPage] = useState(null);
   const [isCreatingItem, setIsCreatingItem] = useState(false);
-  const [newItem, setNewItem] = useState({ name: '', price: '', description: '', image: '', options: [] });
+  const [isCreatingPage, setIsCreatingPage] = useState(false);
+  const [newPageName, setNewPageName] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [newItem, setNewItem] = useState({
+    id: null, name: '', price: '', cost: '', description: '', image: '', options: [], isInventory: false, quantity: '', pages: []
+  });
   const [optionName, setOptionName] = useState('');
   const [optionPrice, setOptionPrice] = useState('');
   const [selectedItem, setSelectedItem] = useState(null);
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [receiptItems, setReceiptItems] = useState([]);
   const [showReceipt, setShowReceipt] = useState(false);
-  const [receiptTitle, setReceiptTitle] = useState('Receipt for Table A20'); // Default title
+  const [receiptTitle, setReceiptTitle] = useState('Receipt for Table A20');
+  const [masterToppings, setMasterToppings] = useState([]); // Master list of all toppings
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+
+    if (name === "cost" && !/^\d*\.?\d*$/.test(value)) {
+      return;
+    }
+
     setNewItem({ ...newItem, [name]: value });
+  };
+
+  const handleCheckboxChange = () => {
+    setNewItem({ ...newItem, isInventory: !newItem.isInventory, quantity: '' });
   };
 
   const handleImageUpload = (e) => {
@@ -32,16 +48,33 @@ const Menu = () => {
   };
 
   const handleSaveItem = () => {
-    setMenuItems([...menuItems, newItem]);
-    setNewItem({ name: '', price: '', description: '', image: '', options: [] });
+    const itemWithPages = { 
+      ...newItem, 
+      id: Date.now(),  // Add a unique ID based on timestamp
+      pages: [...newItem.pages, "All"] 
+    };
+    setMenuItems([...menuItems, itemWithPages]);
+    setNewItem({
+      id: null, name: '', price: '', cost: '', description: '', image: '', options: [], isInventory: false, quantity: '', pages: []
+    });
     setIsCreatingItem(false);
   };
 
   const handleAddOption = () => {
     const newOption = { name: optionName, price: optionPrice };
+
+    // Add option to the menu item
     setNewItem({ ...newItem, options: [...newItem.options, newOption] });
     setOptionName('');
     setOptionPrice('');
+
+    // Update master toppings list if the option is unique
+    const isOptionNew = !masterToppings.some(
+      (topping) => topping.name === newOption.name && topping.price === newOption.price
+    );
+    if (isOptionNew) {
+      setMasterToppings([...masterToppings, newOption]);
+    }
   };
 
   const handleRemoveOption = (index) => {
@@ -49,13 +82,70 @@ const Menu = () => {
     setNewItem({ ...newItem, options: updatedOptions });
   };
 
-  const filteredMenuItems = menuItems.filter(item =>
-    item.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const handleCreatePage = () => {
+    setMenuPages([...menuPages, { name: newPageName }]);
+    setNewPageName('');
+    setIsCreatingPage(false);
+  };
+
+  const handlePageSelect = (pageName) => {
+    setNewItem((prevItem) => ({
+      ...prevItem,
+      pages: prevItem.pages.includes(pageName)
+        ? prevItem.pages.filter((page) => page !== pageName)
+        : [...prevItem.pages, pageName],
+    }));
+  };
+
+  const handleRemoveFromPage = (item, pageName) => {
+    const updatedItems = menuItems.map(menuItem =>
+      menuItem.id === item.id
+        ? { ...menuItem, pages: menuItem.pages.filter(page => page !== pageName) }
+        : menuItem
+    );
+    setMenuItems(updatedItems);
+  };
+
+  const displayItems = selectedPage && selectedPage.name === "All" 
+    ? menuItems
+    : menuItems.filter((item) => item.pages.includes(selectedPage?.name));
 
   const handleItemClick = (item) => {
-    setSelectedItem(item);
+    setSelectedItem({ ...item });
     setSelectedOptions([]);
+  };
+
+  const handleEditChange = (e) => {
+    const { name, value } = e.target;
+    setSelectedItem((prevItem) => ({ ...prevItem, [name]: value }));
+  };
+
+  const handleImageEditUpload = (e) => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setSelectedItem((prevItem) => ({ ...prevItem, image: reader.result }));
+    };
+    if (file) {
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handlePageSelectionChange = (pageName) => {
+    setSelectedItem((prevItem) => ({
+      ...prevItem,
+      pages: prevItem.pages.includes(pageName)
+        ? prevItem.pages.filter((page) => page !== pageName)
+        : [...prevItem.pages, pageName],
+    }));
+  };
+
+  const handleSaveEdits = () => {
+    const updatedItems = menuItems.map((item) =>
+      item.id === selectedItem.id ? selectedItem : item
+    );
+    setMenuItems(updatedItems);
+    setSelectedItem(null);
   };
 
   const handleClosePanel = () => {
@@ -63,64 +153,9 @@ const Menu = () => {
     setSelectedOptions([]);
   };
 
-  const toggleOption = (option) => {
-    if (selectedOptions.includes(option)) {
-      setSelectedOptions(selectedOptions.filter(o => o !== option));
-    } else {
-      setSelectedOptions([...selectedOptions, option]);
-    }
-  };
-
-  const calculateTotal = (price, options) => {
-    const subtotal = options.reduce((acc, option) => acc + parseFloat(option.price || 0), parseFloat(price));
-    const tax = subtotal * 0.13;
-    const total = subtotal + tax;
-    return { subtotal, tax, total };
-  };
-
-  const handleAddMenuItem = (title) => {
-    if (selectedItem) {
-      const newReceiptItem = {
-        ...selectedItem,
-        options: selectedOptions,
-        price: calculateTotal(selectedItem.price, selectedOptions).total,
-        quantity: 1
-      };
-
-      const existingItemIndex = receiptItems.findIndex(
-        item => item.name === newReceiptItem.name && JSON.stringify(item.options) === JSON.stringify(newReceiptItem.options)
-      );
-
-      if (existingItemIndex !== -1) {
-        const updatedReceiptItems = [...receiptItems];
-        updatedReceiptItems[existingItemIndex].quantity += 1;
-        setReceiptItems(updatedReceiptItems);
-      } else {
-        setReceiptItems([...receiptItems, newReceiptItem]);
-      }
-
-      setShowReceipt(true);
-      setReceiptTitle(title);
-      handleClosePanel();
-    }
-  };
-
-  const handleDeleteItem = (index) => {
-    const updatedReceiptItems = receiptItems.filter((_, i) => i !== index);
-    setReceiptItems(updatedReceiptItems);
-  };
-
-  const handleUpdateQuantity = (index, quantity) => {
-    if (quantity > 0) {
-      const updatedReceiptItems = [...receiptItems];
-      updatedReceiptItems[index].quantity = quantity;
-      setReceiptItems(updatedReceiptItems);
-    }
-  };
-
   return (
     <div className="menu-container">
-      {!isCreatingItem ? (
+      {!isCreatingItem && !isCreatingPage ? (
         <>
           <div className="menu-options">
             <input
@@ -137,26 +172,91 @@ const Menu = () => {
               <button className="menu-button" onClick={() => setIsCreatingItem(true)}>+ Create Menu Item</button>
             </div>
             <div>
-              <button className="menu-button">+ Create Menu Page</button>
+              <button className="menu-button" onClick={() => setIsCreatingPage(true)}>+ Create Menu Page</button>
             </div>
           </div>
+
+          {/* Menu Page Tabs */}
+          <div className="menu-pages">
+            <button
+              className={`menu-page-button ${selectedPage?.name === "All" ? 'active' : ''}`}
+              onClick={() => setSelectedPage({ name: "All" })}
+            >
+              All
+            </button>
+            {menuPages.map((page, index) => (
+              <button
+                key={index}
+                className={`menu-page-button ${selectedPage?.name === page.name ? 'active' : ''}`}
+                onClick={() => setSelectedPage(page)}
+              >
+                {page.name}
+              </button>
+            ))}
+          </div>
+
           <div className="menu-list">
-            {filteredMenuItems.length > 0 ? (
-              filteredMenuItems.map((item, index) => (
-                <div key={index} className="menu-item" onClick={() => handleItemClick(item)}>
+            {displayItems.length > 0 ? (
+              displayItems.map((item, index) => (
+                <div key={item.id} className="menu-item" onClick={() => handleItemClick(item)}>
                   {item.image && <img src={item.image} alt={item.name} />}
                   <h4 className="menu-item-name">{item.name}</h4>
                   <p className="menu-item-price">${item.price}</p>
+                  {selectedPage && selectedPage.name !== "All" && (
+                    <button
+                      className="remove-from-page-button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleRemoveFromPage(item, selectedPage.name);
+                      }}
+                    >
+                      Remove from {selectedPage.name}
+                    </button>
+                  )}
                 </div>
               ))
             ) : (
-              <p>+ Add menu items</p>
+              <p>{selectedPage?.name === "All" ? "No items available" : `+ Add items to ${selectedPage?.name} page`}</p>
             )}
           </div>
         </>
+      ) : isCreatingPage ? (
+        <div className="form-container">
+          <h2>Create Menu Page</h2>
+          <label className="label">Page Name</label>
+          <input
+            type="text"
+            className="input-field"
+            value={newPageName}
+            onChange={(e) => setNewPageName(e.target.value)}
+          />
+          <div className="button-container">
+            <button className="menu-button" onClick={() => setIsCreatingPage(false)}>Cancel</button>
+            <button className="menu-button" onClick={handleCreatePage}>Create Page</button>
+          </div>
+        </div>
       ) : (
         <div className="form-container">
           <h2>Create Menu Item</h2>
+          <label className="label">Inventory Item</label>
+          <input
+            type="checkbox"
+            className="input-field"
+            checked={newItem.isInventory}
+            onChange={handleCheckboxChange}
+          />
+          {newItem.isInventory && (
+            <>
+              <label className="label">Quantity</label>
+              <input
+                type="number"
+                className="input-field"
+                name="quantity"
+                value={newItem.quantity}
+                onChange={handleInputChange}
+              />
+            </>
+          )}
           <label className="label">Name</label>
           <input
             type="text"
@@ -173,6 +273,14 @@ const Menu = () => {
             value={newItem.price}
             onChange={handleInputChange}
           />
+          <label className="label">Cost</label>
+          <input
+            type="text"
+            className="input-field"
+            name="cost"
+            value={newItem.cost}
+            onChange={handleInputChange}
+          />
           <label className="label">Description</label>
           <textarea
             className="text-area"
@@ -180,6 +288,8 @@ const Menu = () => {
             value={newItem.description}
             onChange={handleInputChange}
           />
+
+          {/* Image Upload Field */}
           <label className="label">Image</label>
           <div className="image-upload">
             {newItem.image ? (
@@ -195,20 +305,50 @@ const Menu = () => {
               </>
             )}
           </div>
-          <label className="label">Options</label>
+
+          {/* Page Selection */}
+          <label className="label">Select Pages</label>
+          <div className="page-selection">
+            {menuPages.map((page, index) => (
+              <label key={index}>
+                <input
+                  type="checkbox"
+                  checked={newItem.pages.includes(page.name)}
+                  onChange={() => handlePageSelect(page.name)}
+                />
+                {page.name}
+              </label>
+            ))}
+          </div>
+
+          {/* Master Toppings Selection */}
+          <label className="label">Add Options</label>
           <div className="options-container">
-            <div className="option-list">
-              {newItem.options.map((option, index) => (
-                <div key={index} className="option">
-                  {option.name} +${option.price}
-                  <button className="remove-button" onClick={() => handleRemoveOption(index)}>x</button>
-                </div>
+            <select
+              onChange={(e) => {
+                const selectedTopping = masterToppings.find(
+                  (topping) => topping.name === e.target.value
+                );
+                if (selectedTopping) {
+                  setNewItem({ 
+                    ...newItem, 
+                    options: [...newItem.options, selectedTopping] 
+                  });
+                }
+              }}
+              defaultValue=""
+            >
+              <option value="" disabled>Select from Master Toppings</option>
+              {masterToppings.map((topping, index) => (
+                <option key={index} value={topping.name}>
+                  {topping.name} +${topping.price}
+                </option>
               ))}
-            </div>
+            </select>
             <div className="option-input-container">
               <input
                 type="text"
-                placeholder="Name"
+                placeholder="New Option Name"
                 value={optionName}
                 onChange={(e) => setOptionName(e.target.value)}
               />
@@ -226,6 +366,7 @@ const Menu = () => {
               </button>
             </div>
           </div>
+
           <div className="button-container">
             <button className="menu-button" onClick={() => setIsCreatingItem(false)}>Close</button>
             <button className="menu-button" onClick={handleSaveItem}>Save</button>
@@ -237,50 +378,82 @@ const Menu = () => {
         {selectedItem && (
           <>
             <button className="close-button" onClick={handleClosePanel}>×</button>
-            <h2 className="slide-out-title">{selectedItem.name}</h2>
-            {selectedItem.image && <img className="slide-out-image" src={selectedItem.image} alt={selectedItem.name} />}
-            <p className="slide-out-price">
-              <strong className="slide-out-label">Price:</strong> 
-              ${selectedItem.price}
-            </p>
-            <p className="slide-out-description">
-              <strong className="slide-out-label">Description:</strong> 
-              {selectedItem.description}
-            </p>
-            <p className="slide-out-options">
-              <strong className="slide-out-label">Options:</strong>
-            </p>
-            <ul>
-              {selectedItem.options.map((option, index) => (
-                <li 
-                  key={index} 
-                  className={`menu-item-option ${selectedOptions.includes(option) ? 'selected' : ''}`}
-                  onClick={() => toggleOption(option)}
-                >
-                  {option.name} +${option.price}
-                </li>
+            <h2 className="slide-out-title">Edit Menu Item</h2>
+            <label>Name</label>
+            <input
+              type="text"
+              className="input-field"
+              name="name"
+              value={selectedItem.name}
+              onChange={handleEditChange}
+            />
+            <label>Price</label>
+            <input
+              type="text"
+              className="input-field"
+              name="price"
+              value={selectedItem.price}
+              onChange={handleEditChange}
+            />
+            <label>Cost</label>
+            <input
+              type="text"
+              className="input-field"
+              name="cost"
+              value={selectedItem.cost}
+              onChange={handleEditChange}
+            />
+            <label>Description</label>
+            <textarea
+              className="text-area"
+              name="description"
+              value={selectedItem.description}
+              onChange={handleEditChange}
+            />
+            {selectedItem.isInventory && (
+              <>
+                <label>Quantity</label>
+                <input
+                  type="number"
+                  className="input-field"
+                  name="quantity"
+                  value={selectedItem.quantity}
+                  onChange={handleEditChange}
+                />
+              </>
+            )}
+            <label>Pages</label>
+            <div className="page-selection">
+              {menuPages.map((page, index) => (
+                <label key={index}>
+                  <input
+                    type="checkbox"
+                    checked={selectedItem.pages.includes(page.name)}
+                    onChange={() => handlePageSelectionChange(page.name)}
+                  />
+                  {page.name}
+                </label>
               ))}
-            </ul>
-            <div className="slide-out-summary">
-              <p><strong>Subtotal:</strong> ${calculateTotal(selectedItem.price, selectedOptions).subtotal.toFixed(2)}</p>
-              <p><strong>Tax:</strong> ${calculateTotal(selectedItem.price, selectedOptions).tax.toFixed(2)}</p>
-              <p><strong>Total:</strong> ${calculateTotal(selectedItem.price, selectedOptions).total.toFixed(2)}</p>
-              <button className="add-button" onClick={() => handleAddMenuItem('Receipt for Table A20')}>+ Add to Table</button>
-              <button className="add-button" onClick={() => handleAddMenuItem('Receipt for Takeout')}>+ Add to Takeout</button>
             </div>
+            <label>Image</label>
+            <div className="image-upload">
+              {selectedItem.image ? (
+                <img src={selectedItem.image} alt="Menu item" />
+              ) : (
+                <>
+                  <input
+                    type="file"
+                    id="imageEditUpload"
+                    onChange={handleImageEditUpload}
+                  />
+                  <label htmlFor="imageEditUpload">Drag and drop to upload file or <span>Browse</span></label>
+                </>
+              )}
+            </div>
+            <button className="menu-button" onClick={handleSaveEdits}>Save Changes</button>
           </>
         )}
       </div>
-      {showReceipt && (
-        <Receipt 
-          receiptItems={receiptItems} 
-          onAddMenuItem={() => setIsCreatingItem(false)} 
-          onClose={() => setShowReceipt(false)}
-          title={receiptTitle}
-          onDeleteItem={handleDeleteItem}
-          onUpdateQuantity={handleUpdateQuantity}
-        />
-      )}
     </div>
   );
 };
